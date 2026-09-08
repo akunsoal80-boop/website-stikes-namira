@@ -1,0 +1,11 @@
+CREATE DATABASE IF NOT EXISTS repository_namira_v2 CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+USE repository_namira_v2;
+CREATE TABLE users(id INT AUTO_INCREMENT PRIMARY KEY,name VARCHAR(150) NOT NULL,username VARCHAR(80) UNIQUE NOT NULL,password VARCHAR(255) NOT NULL,role ENUM('super_admin','admin','operator') DEFAULT 'operator',created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP);
+INSERT INTO users(name,username,password,role) VALUES('Administrator','admin','$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llCw0Jx2hB7pW0n8vYQ6','super_admin');
+CREATE TABLE study_programs(id INT AUTO_INCREMENT PRIMARY KEY,name VARCHAR(200) NOT NULL,code VARCHAR(30),created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP);
+INSERT INTO study_programs(name,code) VALUES('S1 Keperawatan','S1-KP'),('D3 Kebidanan','D3-KB');
+CREATE TABLE document_types(id INT AUTO_INCREMENT PRIMARY KEY,name VARCHAR(100) NOT NULL);
+INSERT INTO document_types(name) VALUES('Skripsi'),('Karya Tulis Ilmiah'),('Jurnal'),('Penelitian'),('Pengabdian Masyarakat'),('Buku'),('Modul'),('Prosiding'),('Dokumen Institusi');
+CREATE TABLE documents(id INT AUTO_INCREMENT PRIMARY KEY,title VARCHAR(500) NOT NULL,author VARCHAR(255) NOT NULL,nim VARCHAR(80),study_program_id INT,type_id INT,year YEAR NOT NULL,abstract TEXT,keywords VARCHAR(500),file_path VARCHAR(500),status ENUM('draft','review','published','rejected') DEFAULT 'draft',views INT DEFAULT 0,downloads INT DEFAULT 0,created_by INT,created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,FOREIGN KEY(study_program_id) REFERENCES study_programs(id) ON DELETE SET NULL,FOREIGN KEY(type_id) REFERENCES document_types(id) ON DELETE SET NULL);
+CREATE TABLE audit_logs(id BIGINT AUTO_INCREMENT PRIMARY KEY,user_id INT,action VARCHAR(100),detail TEXT,created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,FOREIGN KEY(user_id) REFERENCES users(id) ON DELETE SET NULL);
+INSERT INTO documents(title,author,nim,study_program_id,type_id,year,abstract,keywords,status) VALUES('Contoh Karya Ilmiah Repository STIKes Namira Madina','Administrator','-',1,2,2026,'Data contoh. Ganti dengan koleksi resmi kampus.','repository,STIKes Namira Madina','published');
